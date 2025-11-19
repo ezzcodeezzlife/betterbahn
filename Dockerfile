@@ -27,6 +27,8 @@ WORKDIR /app
 ENV TZ=Europe/Berlin
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+# Configure Next.js to listen on all interfaces (0.0.0.0) so it's accessible on localhost
+ENV HOSTNAME=0.0.0.0
 
 # add curl to get heathcheck to run
 RUN apk add curl
@@ -45,6 +47,6 @@ USER node
 # Expose port and add healthcheck
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=5 \
-    CMD IP=$(hostname -i | awk '{print $1}'); curl -fsS -4 "http://$IP:${PORT:-3000}" || exit 1
+    CMD curl -fsS http://localhost:${PORT:-3000} || exit 1
 
 CMD ["node", "server.js"]
